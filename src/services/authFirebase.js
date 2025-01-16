@@ -5,7 +5,6 @@ export const signInWithGoogle = async () => {
   const provider = new GoogleAuthProvider()
   try {
     const result = await signInWithPopup(auth, provider)
-    console.log('Ты вошел');
   return result.user
   } catch (error) {
     console.error('Ошибка при входе через Google:', error)
@@ -16,7 +15,6 @@ export const signInWithGoogle = async () => {
 export const logout = async () => {
   try {
     await signOut(auth)
-    console.log('Ты вышел');
   } catch (error) {
     console.error('Ошибка при выходе из аккаунта:', error)
     throw error
