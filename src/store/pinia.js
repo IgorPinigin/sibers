@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { subscribeOnAuthStateChanged, logout } from "../services/authFirebase"; 
 import { ref } from "vue";
+
 export const useUserStore = defineStore("user", () => {
   const user = ref(null);
 

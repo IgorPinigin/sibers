@@ -2,22 +2,27 @@
   <div class="card">
     <div class="icon" :style="iconStyle"></div>
     <div class="name"> {{ store.user.displayName }}</div>
+    <div class="exit" @click="logout">Выйти</div>
   </div>
 </template>
 
 <script setup>
 import { useUserStore } from '../../../store/pinia';
 import { ref, computed } from 'vue';
-
+import { useRouter } from "vue-router";
+const router = useRouter()
 const store = useUserStore();
-console.log(store.user)
 const iconStyle = computed(() => {
   return {
     backgroundImage: store.user 
       ? `url('${store.user.photoURL}')` 
       : 'none'
   }
-})
+});
+const logout = async() =>{
+  await store.handleLogout();
+  router.push('/')
+}
 </script>
 
 <style lang="css" scoped>
@@ -33,9 +38,6 @@ const iconStyle = computed(() => {
   border: 1px;
   background-color: rgba(253, 253, 253, 0.029);
 }
-.card:hover{
-  background-color: rgba(253, 253, 253, 0.069);
-}
 .icon{
   width: 36px;
   height: 36px;
@@ -44,8 +46,18 @@ const iconStyle = computed(() => {
   background-size: cover;
 }
 .name{
-
   color: aliceblue;
   font-size: 20px;
+}
+.exit{
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 6px 24px;
+  border-color: rgb(142, 142, 142);
+  margin-left: auto;
+}
+.exit:hover{
+  background-color: rgb(207, 6, 6);
+  border-color:rgb(207, 6, 6);
 }
 </style>
