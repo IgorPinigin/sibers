@@ -1,8 +1,13 @@
 <template>
-  <div class="card">
-    <div class="icon" :style="iconStyle"></div>
-    <div class="name"> {{ store.user.displayName }}</div>
+  <div v-if="store.user" class="card">
+    <img :src="store.user.photoURL" :alt="store.user.displayName" class="icon" />
+    <div class="name">
+      <div>{{ store.user.displayName }}</div>
+    </div>
     <div class="exit" @click="logout">Выйти</div>
+  </div>
+  <div v-else>
+    Загрузка...
   </div>
 </template>
 

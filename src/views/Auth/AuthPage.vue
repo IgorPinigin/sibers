@@ -1,7 +1,9 @@
 <template>
-  Войди в чат
-  <div>
-    <button @click="signIn">Войти через гугл</button>
+  <div class="auth">
+    Войди в чат
+    <div>
+      <button @click="signIn">Войти через гугл</button>
+    </div>
   </div>
 </template>
 
@@ -17,6 +19,9 @@ const signIn = async() =>{
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="css" scoped>
+.auth{
+  width: 90vw;
+  
+}
 </style>

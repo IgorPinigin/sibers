@@ -1,53 +1,34 @@
 <template>
   <div class="chat">
-    <div class="messages-column" :ref="messageColumn">
-      <div v-for="message, index in messages" :key="message.msgId">
-        <div class="message-admin" v-if="message.author === 'admin'">{{ message.text }}</div>
-        <div v-else :class="[
-          'message',
-          message.authorId === store.user.uid ? 'message-right' : 'message-left'
-        ]">
-          <div class="message-text">{{ message.text }}</div>
-          <div class="message-avatar"></div>
-        </div>
-      </div>
-    </div>
+    <ChatInfo :chatId="chatId"></ChatInfo>
+    <MessagesColumn></MessagesColumn>
     <div class="message-insert">
       <input type="" title="Введи сообщение" placeholder="Введи сообщение" @keyup.enter="handleSendMessage"
         v-model="newMessage">
+      <button @click="handleSendMessage">Отправить</button>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { onMounted, onUnmounted, ref, nextTick } from 'vue';
-  import { subscribeToChatMessages, sendMessage } from '../../services/chatFirebase';
+  import { onUnmounted, ref } from 'vue';
+  import { sendMessage } from '../../services/chatFirebase';
   import { useRoute } from 'vue-router';
   import { useUserStore } from '../../store/pinia';
+  import MessagesColumn from './components/MessagesColumn.vue';
+  import ChatInfo from './components/ChatInfo.vue';
   const store = useUserStore();
   let unsubscribe = null
   const router = useRoute();
-  const messages = ref([]);
   const newMessage = ref(null);
   const chatId = router.params.id;
-  const messageColumn = ref(null);
+
 
   const handleSendMessage = async () => {
-    sendMessage(chatId, store.user.uid, newMessage.value)
+    sendMessage(chatId, store.user.uid, store.user.photoURL, newMessage.value)
     newMessage.value = null;
   };
 
-  onMounted(async () => {
-    const chatId = router.params.id;
-    unsubscribe = subscribeToChatMessages(chatId, (newMessages) => {
-      messages.value = newMessages
-    })
-    await nextTick();
-    // После обновления прокручиваем контейнер вниз
-    if (messageColumn.value) {
-      messageColumn.value.scrollTop = messageColumn.value.scrollHeight;
-    }
-  })
   onUnmounted(() => {
     if (unsubscribe) {
       unsubscribe()
@@ -72,11 +53,6 @@
     color: rgb(157, 157, 157);
   }
 
-  .messages-column {
-    flex: 1;
-    overflow-y: auto;
-  }
-
   .message-insert {
     width: 100vw;
     height: 40px;
@@ -88,57 +64,6 @@
     flex: 1
   }
 
-  .message {
-  display: flex;
-  align-items: center;
-  margin: 8px 0;
-}
-
-/* Оформление «бабла» с текстом */
-.message-text {
-  text-align: left;
-  overflow-wrap: break-word;
-  max-width: 60%;
-  padding: 8px 12px;
-  border-radius: 12px;
-}
-
-/* Кружок для аватара (по умолчанию пустой) */
-.message-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #ccc;
-  margin-left: 8px; /* Чтобы отделить аватар от текста */
-  /* при желании можете добавить border, фон картинки и т.д. */
-}
-
-/* --- Сообщения другого пользователя (слева) --- */
-.message-left {
-  /* Выравниваем основной контент (текст + аватар) влево */
-  justify-content: flex-start;
-}
-
-.message-left .message-text {
-  background-color: #464646;
-}
-
-.message-right {
-  justify-content: flex-end;
-}
-
-.message-right .message-text {
-  background-color: #469846;
-}
-
-.message-left .message-avatar {
-  order: -1;
-  margin: 0 8px 0 8px;
-}
-
-.message-right .message-avatar {
-  order: 1;
-  margin: 0 8px 0 8px;
-}
+  
 
 </style>

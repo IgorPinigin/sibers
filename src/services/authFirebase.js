@@ -25,7 +25,7 @@ export const signInWithGoogle = async () => {
     }
     return result.user
   } catch (error) {
-    console.error('Ошибка при входе через Google:', error)
+    console.error('', error)
     throw error
   }
 }
@@ -34,11 +34,14 @@ export const logout = async () => {
   try {
     await signOut(auth)
   } catch (error) {
-    console.error('Ошибка при выходе из аккаунта:', error)
+    console.error('', error)
     throw error
   }
 }
 
 export const subscribeOnAuthStateChanged = (callback) => {
-  return onAuthStateChanged(auth, callback)
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    callback(user)
+  })
+  return unsubscribe
 }

@@ -2,8 +2,12 @@
   <div class="chat-block">
     <div class="title">{{ props.title }}</div>
     <div>
-      <div class="chat" v-for="chat, index in props.chats" @click="openChat(chat)" :key="index">
+      <div class="chat" v-for="chat, index in props.chats" :key="index">
         {{ chat.name }}
+        <div class="invite">
+          <div class="btn true" @click="invite(chat)">принять</div>
+          <div class="btn false" @click="deleteChat(chat)">отклонить</div>
+        </div>
       </div>
       
       <div class="chat" v-if="props.chats.length === 0"> Не найдено ни одного чата</div>
@@ -15,16 +19,26 @@
 <script setup>
   import { defineProps, } from 'vue';
   import { useRouter } from 'vue-router';
+  import { useUserStore } from '../../../store/pinia';
+  const store = useUserStore();
 
   const router = useRouter();
   const props = defineProps({
     title: String,
     chats: Array
   });
+
+  const invite = (chat) =>{
+    store.inviteToChat(chat.chatId, store.user.uid);
+    openChat(chat);
+  };
+  const deleteChat = (chat) =>{
+    store.deleteUserFromChat(chat.chatId, store.user.uid);
+  };
   const openChat = (chat) => {
-    console.log(chat)
     router.push(`/chat/${chat.chatId}`)
   };
+
 </script>
 
 <style lang="css" scoped>
@@ -55,6 +69,9 @@
     cursor: pointer;
     text-align: left;
     border-bottom: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .chat:hover {
     background-color: #0000001f;
@@ -67,4 +84,25 @@
     height: 1px;
     background-color: black;
   }
+  .invite{
+    display: flex;
+    gap: 8px;
+  }
+  .true{
+    background-color: green;
+  }
+  .true:hover{
+    background-color: rgb(1, 88, 1);
+  }
+  .false{
+    background-color: rgb(128, 0, 0);
+  }
+  .false:hover{
+    background-color: rgb(86, 0, 0);
+  }
+  .btn{
+    padding: 2px 4px;
+    border-radius: 6px;
+  }
+  
 </style>

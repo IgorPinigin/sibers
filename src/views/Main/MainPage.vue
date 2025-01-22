@@ -1,41 +1,42 @@
 <template>
   <div class="main" @click="showAddChat=false">
     <UserCard />
-    <!-- <div>
-      <input type="text" @keyup.enter="handleSendMessage" v-model="newMessage">
-      <button>Отправить сообщение</button>
-    </div> -->
-      <!-- <input type="text" @keyup.enter="handleCreateChat" v-model="newChat"> -->
     <button class="create-chat" @click.stop="showAddChat=true">Создать новый чат</button>
 
     <ChatsColumn title="Мои чаты" :chats="adminChats"></ChatsColumn>
     <ChatsColumn title="Чаты, в которых я состою" :chats="chats"></ChatsColumn>
+    <InviteChatsColumn title="Чаты, в которые меня пригласили" :chats="inviteChats"></InviteChatsColumn>
     <AddChatPopup @click.stop="" v-show="showAddChat"></AddChatPopup>
   </div>
-
+  <div class="blur" @click="showAddChat=false" v-show="showAddChat"></div>
 </template>
 
 <script setup>
   import UserCard from './components/UserCard.vue';
   import AddChatPopup from './components/AddChatPopup.vue';
   import ChatsColumn from './components/ChatsColumn.vue';
+  import InviteChatsColumn from './components/InviteChatsColumn.vue';
   import { ref, onMounted } from 'vue';
-  import { sendMessage, getAdminChats, getChatsForUser } from '../../services/chatFirebase';
+  import { getAdminChats, getChatsForUser } from '../../services/chatFirebase';
   import { useUserStore } from '../../store/pinia';
+  import { useRouter } from 'vue-router';
 
   const store = useUserStore();
-  const newMessage = ref(null);
   const adminChats =ref([]);
   const chats = ref([]);
   const showAddChat = ref(false);
-
-  const handleSendMessage = async () => {
-    await sendMessage('', '', newMessage.value)
-  };
+  const inviteChats = ref([]);
+  const router = useRouter()
 
   onMounted(async()=>{
-    adminChats.value = await getAdminChats(store.user.uid);
-    chats.value = await getChatsForUser(store.user.uid);
+    if(store.user){
+      adminChats.value = await getAdminChats(store.user.uid);
+      const allChats = await getChatsForUser(store.user.uid);
+      chats.value = allChats.filter(chat => chat.users[store.user.uid] === true)
+      inviteChats.value =  allChats.filter(chat => chat.users[store.user.uid] === false)
+    }else{
+      router.push('/')
+    }
   });
 </script>
 
@@ -43,6 +44,14 @@
 .main{
   width: 100vw;
   height: 100vh;
+}
+.blur{
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(5px);
 }
 .create-chat{
   margin-top: 10%;
