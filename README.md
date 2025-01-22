@@ -1,5 +1,10 @@
-# Vue 3 + Vite
+## Installation
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Front:
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+- npm install
+- npm run dev
+
+## Usage
+
+После авторизации вы можете сделать новый чат, либо посмотреть чаты в которые вы приглашены( если они есть). При создании чата нужно выбрать пользователей, которых вы хотите добавить(сейчас там будут все пользователи, когда-либо авторизовавшиеся в системе). После действий с чатами и пользователями принудительно обновите страницу. К сожалению, не все получилось реализовать, так как много времени потратил на работу с firebase, до этого не работал с ней. Есть недоработки по ui и ux.
