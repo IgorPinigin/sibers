@@ -1,9 +1,22 @@
 <script setup>
+import { useUserStore } from './store/pinia'; 
+import { onMounted } from 'vue';
+import { auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+
+const store = useUserStore();
+
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    store.user = user
+    if (user) {
+    } 
+  });
+});
 </script>
 
 <template>
-  <div>
-  </div>
+  <router-view />
 </template>
 
 <style scoped>
